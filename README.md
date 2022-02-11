@@ -1,6 +1,6 @@
 # gps_contoller
-
-A new Flutter project.
+This app using SMS for connect to a GSM device , The device send or recive GPS and other sensors data in sms format to this app and show that data in Map .
+it use for Security of Cars , Place and Kids ! The GSM device is small and portable.
 
 ## Getting Started
 
