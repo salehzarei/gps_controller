@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:gps_contoller/Hive/configModel.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:universe/universe.dart';
 import 'package:telephony/telephony.dart';
 import 'package:location/location.dart';
@@ -20,35 +22,63 @@ class GPSController extends GetxController {
   final userToCarPolyline = <Polyline>[].obs;
   final telephony = Telephony.backgroundInstance.obs;
 
+  // Hive Config
+  Box<ConfigModel>? hiveConfig;
+
   // setting status
+  final allCongifs = ConfigModel(modemPhonNumber: '+989933785391').obs;
   final doorLockState = false.obs;
   final timerOnOFF = false.obs;
   final simCardBalance = 0.0.obs;
   final carStatus = ''.obs;
   final systemUsers = ''.obs;
   final systemCallSMS = ''.obs;
-  final systemUser1 = '+989155184335'.obs;
-  final systemUser2 = ''.obs;
-  final systemUser3 = ''.obs;
+  final systemUser1 = TextEditingController(text: '+989155184335').obs;
+  final systemUser2 = TextEditingController().obs;
+  final systemUser3 = TextEditingController().obs;
   final simCardOperator = ''.obs;
-  final callTime = 1.obs;
+  final callDelayTime = TextEditingController(text: '1').obs;
 
   onBackgroundMessage(SmsMessage message) {
     print("onBackgroundMessage called");
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     findMyLocation();
     initPlatformState();
+
+    hiveConfig = await Hive.openBox<ConfigModel>('gpscontroller');
+    loadConfig();
     super.onInit();
   }
 
-  // @override
-  // void dispose() {
-  //   gpsMapController.value.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    gpsMapController.value.dispose();
+    Hive.close();
+    super.dispose();
+  }
+
+  //Save Config to Hive
+  saveConfig(ConfigModel configs) {
+    hiveConfig?.add(configs);
+    update();
+  }
+
+  //Load Config From Hive
+  loadConfig() {
+    if (hiveConfig!.isNotEmpty) {
+      log("Hive Object Key is:" +
+          hiveConfig!.getAt(0)!.callSMSPhone.toString());
+      allCongifs(hiveConfig?.getAt(0));
+    } else {
+      // add Defult Config for First Time
+      hiveConfig?.add(allCongifs.value);
+      log(hiveConfig!.length.toString());
+    }
+    update();
+  }
 
   Future<void> initPlatformState() async {
     final bool? result = await telephony.value.requestPhoneAndSmsPermissions;
@@ -59,7 +89,6 @@ class GPSController extends GetxController {
   }
 
   void onMessage(SmsMessage message) async {
-    //Sample Format [180404,10,0,36.282047,59.565208,090222,1,1,12.5,666]
     print(message.address);
     print(message.body);
     print(message.date);
@@ -71,27 +100,19 @@ class GPSController extends GetxController {
     print(message.threadId);
     print(message.type);
 
-    // ignore: avoid_print
-    //  print("Recive: $recivedSMS");
     //982000500666
-    if (message.body!.isNotEmpty && message.address == '982000500666') {
+    if (message.body!.isNotEmpty &&
+        message.address == allCongifs.value.modemPhonNumber) {
       recivedSMS(message.body?.trim() ?? "Error reading message body.");
-      // recivedSMS(
-      //     "[${(recivedSMS.value.substring(1, recivedSMS.value.length - 1)).trim()}]");
 
-      recivedDataList(convert(recivedSMS.value));
-      if (recivedDataList.isNotEmpty) {
-        changeCarStatus();
-      } else {
-        log('No List Maked ! Check Message Format Plase');
-      }
+      detectResponseMessage(recivedSMS.value);
     }
     isLoadinToSendMessage(false);
     update();
   }
 
 // Convert Recive SMS To List Of String
-  List convert(String input) {
+  List convertToList(String input) {
     input = "[${(input.substring(1, input.length - 1)).trim()}]";
     try {
       return input.split(',');
@@ -109,12 +130,9 @@ class GPSController extends GetxController {
     currentCarLocation(_newCarState);
     carMarkers.add(U.Marker(currentCarLocation.value,
         data: 'موقعیت خودرو',
-        widget: const MarkerIcon(
-          icon: Icons.car_repair_rounded,
-          color: Colors.red,
-        )));
-    print("Current Car Location : $currentCarLocation");
-    print("Current User Location : $currentUserLocation");
+        widget: const MarkerImage('assets/images/car.png')));
+    log("Current Car Location : $currentCarLocation");
+    log("Current User Location : $currentUserLocation");
     currentDistance(U
         .distanceBetween(currentUserLocation.value, currentCarLocation.value)
         .toString());
@@ -128,8 +146,92 @@ class GPSController extends GetxController {
     final bool? result = await telephony.value.requestSmsPermissions;
     if (result != null && result) {
       //09933785391
-      //   await telephony.value.sendSms(to: '09933785391', message: command);
+      await telephony.value.sendSms(
+          to: allCongifs.value.modemPhonNumber ?? '+989933785391',
+          message: command);
       log(command);
+      Get.snackbar(
+          'دستور ارسال شده به ${allCongifs.value.modemPhonNumber}', command,
+          duration: const Duration(seconds: 5), backgroundColor: Colors.yellow);
+    }
+  }
+
+  detectResponseMessage(String message) {
+    //Sample Format [180404,10,0,36.282047,59.565208,090222,1,1,12.5,666]
+    switch (message.split(":").first) {
+      case 'Lock':
+        {
+          allCongifs.value.lockStatus = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      case 'Timer':
+        {
+          allCongifs.value.timerStatus = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      case 'Balance':
+        {
+          allCongifs.value.balance = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      case 'Status':
+        {
+          allCongifs.value.lockStatus = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      case 'Users':
+        {
+          allCongifs.value.users = message.split(":").last.split(',');
+          allCongifs.value.save();
+        }
+        break;
+      case 'Callsms':
+        {
+          allCongifs.value.callSMSPhone = message.split(":").last.split(',');
+          allCongifs.value.save();
+        }
+        break;
+      case 'User1':
+        {
+          allCongifs.value.user1Phone = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      case 'User2':
+        {
+          allCongifs.value.user2Phone = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      case 'User3':
+        {
+          allCongifs.value.user3Phone = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      case 'Oprator':
+        {
+          allCongifs.value.operatorName = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      case 'Interva':
+        {
+          allCongifs.value.delayTime = message.split(":").last;
+          allCongifs.value.save();
+        }
+        break;
+      default:
+        recivedDataList(convertToList(message));
+        if (recivedDataList.isNotEmpty) {
+          changeCarStatus();
+        } else {
+          log('No List Maked ! Check Message Format Plase');
+        }
     }
   }
 

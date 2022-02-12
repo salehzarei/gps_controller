@@ -140,7 +140,12 @@ class GPSSetteingPage extends StatelessWidget {
                                         Expanded(
                                           flex: 2,
                                           child: ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              x.sendMessage(command: 'status');
+                                              Get.dialog(const GPSDialogBox(
+                                                  dialogType: GPSDialogBoxType
+                                                      .carStatus));
+                                            },
                                             child: const Text(
                                                 'دریافت آخرین وضعیت خودرو'),
                                             style: ElevatedButton.styleFrom(
@@ -188,7 +193,12 @@ class GPSSetteingPage extends StatelessWidget {
                                         Expanded(
                                           flex: 2,
                                           child: ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              x.sendMessage(command: 'users?');
+                                              Get.dialog(const GPSDialogBox(
+                                                  dialogType:
+                                                      GPSDialogBoxType.users));
+                                            },
                                             child: const Text(
                                                 'به روزرسانی لیست کاربران'),
                                             style: ElevatedButton.styleFrom(
@@ -236,9 +246,14 @@ class GPSSetteingPage extends StatelessWidget {
                                         Expanded(
                                           flex: 2,
                                           child: ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              x.sendMessage(command: 'callsms');
+                                              Get.dialog(const GPSDialogBox(
+                                                  dialogType: GPSDialogBoxType
+                                                      .callsms));
+                                            },
                                             child: const Text(
-                                                'به روزرسانی پیامک و تماس'),
+                                                'استعلام گیرنده پیامک و تماس'),
                                             style: ElevatedButton.styleFrom(
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -280,13 +295,17 @@ class GPSSetteingPage extends StatelessWidget {
                                     ),
                                     Expanded(
                                         child: Text(
-                                      x.systemUser1.value,
+                                      x.systemUser1.value.text,
                                       textAlign: TextAlign.center,
                                       maxLines: 1,
                                       textDirection: TextDirection.ltr,
                                     )),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Get.dialog(const GPSDialogBox(
+                                            dialogType:
+                                                GPSDialogBoxType.setUser1));
+                                      },
                                       child: const Text('ویرایش'),
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
@@ -314,13 +333,17 @@ class GPSSetteingPage extends StatelessWidget {
                                     ),
                                     Expanded(
                                         child: Text(
-                                      x.systemUser2.value,
+                                      x.systemUser2.value.text,
                                       textAlign: TextAlign.center,
                                       maxLines: 1,
                                       textDirection: TextDirection.ltr,
                                     )),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Get.dialog(const GPSDialogBox(
+                                            dialogType:
+                                                GPSDialogBoxType.setUser2));
+                                      },
                                       child: const Text('ویرایش'),
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
@@ -348,13 +371,17 @@ class GPSSetteingPage extends StatelessWidget {
                                     ),
                                     Expanded(
                                         child: Text(
-                                      x.systemUser3.value,
+                                      x.systemUser3.value.text,
                                       textAlign: TextAlign.center,
                                       maxLines: 1,
                                       textDirection: TextDirection.ltr,
                                     )),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Get.dialog(const GPSDialogBox(
+                                            dialogType:
+                                                GPSDialogBoxType.setUser3));
+                                      },
                                       child: const Text('ویرایش'),
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
@@ -382,13 +409,17 @@ class GPSSetteingPage extends StatelessWidget {
                                     ),
                                     Expanded(
                                         child: Text(
-                                      x.callTime.value.toString() + ' دقیقه',
+                                      x.callDelayTime.value.text + ' دقیقه',
                                       textAlign: TextAlign.center,
                                       maxLines: 1,
                                       textDirection: TextDirection.rtl,
                                     )),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Get.dialog(const GPSDialogBox(
+                                            dialogType:
+                                                GPSDialogBoxType.delayTime));
+                                      },
                                       child: const Text('ویرایش'),
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(

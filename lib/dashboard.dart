@@ -17,7 +17,10 @@ class GPSDashboard extends StatelessWidget {
         },
         builder: (_) => Scaffold(
             appBar: AppBar(
-              title: const Text('داشبورد'),
+              title: const Text(
+                'داشبورد کنترل GPS خودرو',
+                textDirection: TextDirection.rtl,
+              ),
               centerTitle: true,
               backgroundColor: Colors.blueGrey,
               actions: [
@@ -42,6 +45,7 @@ class GPSDashboard extends StatelessWidget {
                         onPressed: x.doorLockState.value
                             ? () {
                                 x.doorLockState.toggle();
+                                x.sendMessage(command: 'lock close');
                               }
                             : null,
                         child: const Text('بــاز'),
@@ -66,6 +70,7 @@ class GPSDashboard extends StatelessWidget {
                         onPressed: !x.doorLockState.value
                             ? () {
                                 x.doorLockState.toggle();
+                                x.sendMessage(command: 'lock open');
                               }
                             : null,
                         child: const Text('قفل'),
@@ -95,7 +100,12 @@ class GPSDashboard extends StatelessWidget {
                           // moveWhenLive: false,
                           // showCenterMarker: true,
                           size: Size(Get.width, Get.height * 0.59),
-                          markers: U.MarkerLayer(x.carMarkers)),
+                          layers: [U.MarkerLayer(x.carMarkers)],
+                          markers: U.MarkerLayer(U.Marker(
+                              x.currentUserLocation.value,
+                              data: 'موقعیت خودرو',
+                              widget: const MarkerImage(
+                                  'assets/images/home.png')))),
                 ),
                 Expanded(
                   flex: 1,
@@ -103,6 +113,7 @@ class GPSDashboard extends StatelessWidget {
                     padding: const EdgeInsets.all(20),
                     width: Get.width,
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Opacity(
                           opacity: x.isLoadinToSendMessage.value ? 0.5 : 1,
@@ -133,7 +144,8 @@ class GPSDashboard extends StatelessWidget {
                                   width: 50,
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => x.detectResponseMessage(
+                                      '[180404,10,0,36.282047,59.565208,090222,1,1,12.5,666]'),
                                   child: const Text('توقف بررسی'),
                                   style: ElevatedButton.styleFrom(
                                     primary: Colors.red,
@@ -154,7 +166,20 @@ class GPSDashboard extends StatelessWidget {
                         ),
                         Visibility(
                             visible: x.isLoadinToSendMessage.value,
-                            child: const LinearProgressIndicator())
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                LinearProgressIndicator(),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'کمی صبر کنید ... در انتظار پاسخ از دستگاه',
+                                  style: TextStyle(color: Colors.blue),
+                                )
+                              ],
+                            ))
                       ],
                     ),
                   ),
