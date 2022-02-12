@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gps_contoller/Components/dialogBox.dart';
 import 'package:gps_contoller/gpsController.dart';
 
 class GPSSetteingPage extends StatelessWidget {
@@ -16,15 +17,29 @@ class GPSSetteingPage extends StatelessWidget {
                 centerTitle: true,
                 actions: [
                   IconButton(
-                      onPressed: () => Get.snackbar(
-                          'ذخیره تنظیمات', 'با موفقیت ارسال شد',
-                          backgroundColor: Colors.green.withOpacity(0.8)),
-                      icon: const Icon(Icons.save))
+                      onPressed: () => Get.snackbar('', '',
+                          colorText: Colors.white,
+                          duration: const Duration(seconds: 5),
+                          titleText: Text(
+                            'اپلیکیشن کنترل GPS خودرو ورژن 1.0',
+                            style: Get.textTheme.titleMedium
+                                ?.copyWith(color: Colors.white),
+                            textDirection: TextDirection.rtl,
+                          ),
+                          messageText: Text(
+                            'طراحی و ساخت توسط حضرت مهندس امید حسن نژاد. با شب زنده داری زیاد این محصول آماده شده پس بر پدر مادر هرکسی کپی کنه لعنت !',
+                            style: Get.textTheme.titleSmall
+                                ?.copyWith(color: Colors.white),
+                            textDirection: TextDirection.rtl,
+                          ),
+                          backgroundColor: Colors.purple.withOpacity(0.8)),
+                      icon: const Icon(Icons.info_outline_rounded))
                 ],
               ),
               body: Directionality(
                 textDirection: TextDirection.rtl,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
                         flex: 5,
@@ -53,6 +68,9 @@ class GPSSetteingPage extends StatelessWidget {
                                         value: x.timerOnOFF.value,
                                         onChanged: (val) {
                                           x.timerOnOFF(val);
+                                          Get.dialog(const GPSDialogBox(
+                                              dialogType:
+                                                  GPSDialogBoxType.timerOnOff));
                                           x.sendMessage(
                                               command: val
                                                   ? 'timer on'
@@ -77,113 +95,171 @@ class GPSSetteingPage extends StatelessWidget {
                                         style: Get.textTheme.titleMedium,
                                       ),
                                     ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        x.sendMessage(command: 'balance');
+                                        Get.dialog(const GPSDialogBox(
+                                            dialogType: GPSDialogBoxType
+                                                .simCardBalance));
+                                      },
+                                      child: const Text('بروزرسانی'),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                    ),
                                     const SizedBox(
                                       width: 10,
                                     ),
                                     Expanded(
                                         child: Text(
-                                            'آخرین اعتبار ${x.simCardAccount.value} ریال'))
+                                            'آخرین اعتبار ${x.simCardBalance.value} ریال'))
                                   ],
                                 ),
                               ),
                               // item 3
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Row(
+                                padding:
+                                    const EdgeInsets.only(bottom: 20, top: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: Text(
-                                        'وضعیت خودرو',
-                                        style: Get.textTheme.titleMedium,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'وضعیت خودرو',
+                                            style: Get.textTheme.titleMedium,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: ElevatedButton(
+                                            onPressed: () {},
+                                            child: const Text(
+                                                'دریافت آخرین وضعیت خودرو'),
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
-                                      ),
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.end,
+                                      alignment: WrapAlignment.start,
+                                      children: [
+                                        Text(
+                                          'آخرین وضعیت دریافتی خودرو:',
+                                          style: Get.textTheme.bodySmall,
+                                        ),
+                                        Text(x.carStatus.value)
+                                      ],
                                     )
                                   ],
                                 ),
                               ),
                               // item 4
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Row(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: Text(
-                                        'مشاهده کاربران',
-                                        style: Get.textTheme.titleMedium,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'مشاهده کاربران',
+                                            style: Get.textTheme.titleMedium,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: ElevatedButton(
+                                            onPressed: () {},
+                                            child: const Text(
+                                                'به روزرسانی لیست کاربران'),
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
-                                      ),
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.end,
+                                      alignment: WrapAlignment.start,
+                                      children: [
+                                        Text(
+                                          'کاربران فعال:',
+                                          style: Get.textTheme.bodySmall,
+                                        ),
+                                        Text(x.carStatus.value)
+                                      ],
                                     )
                                   ],
                                 ),
                               ),
                               // item 5
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Row(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: Text(
-                                        'تماس و پیامک',
-                                        style: Get.textTheme.titleMedium,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'پیامک و تماس',
+                                            style: Get.textTheme.titleMedium,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: ElevatedButton(
+                                            onPressed: () {},
+                                            child: const Text(
+                                                'به روزرسانی پیامک و تماس'),
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
-                                      ),
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.end,
+                                      alignment: WrapAlignment.start,
+                                      children: [
+                                        Text(
+                                          'شماره گیرنده تماس و پیامک : ',
+                                          style: Get.textTheme.bodySmall,
+                                        ),
+                                        Text(x.carStatus.value)
+                                      ],
                                     )
                                   ],
                                 ),
@@ -195,7 +271,7 @@ class GPSSetteingPage extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        'ذخیره کاربر 1',
+                                        'تنظیم کاربر 1',
                                         style: Get.textTheme.titleMedium,
                                       ),
                                     ),
@@ -203,22 +279,22 @@ class GPSSetteingPage extends StatelessWidget {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
+                                        child: Text(
+                                      x.systemUser1.value,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      textDirection: TextDirection.ltr,
+                                    )),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Text('ویرایش'),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -229,7 +305,7 @@ class GPSSetteingPage extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        'ذخیره کاربر 2',
+                                        'تنظیم کاربر 2',
                                         style: Get.textTheme.titleMedium,
                                       ),
                                     ),
@@ -237,22 +313,22 @@ class GPSSetteingPage extends StatelessWidget {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
+                                        child: Text(
+                                      x.systemUser2.value,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      textDirection: TextDirection.ltr,
+                                    )),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Text('ویرایش'),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -263,7 +339,7 @@ class GPSSetteingPage extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        'ذخیره کاربر 3',
+                                        'تنظیم کاربر 3',
                                         style: Get.textTheme.titleMedium,
                                       ),
                                     ),
@@ -271,22 +347,22 @@ class GPSSetteingPage extends StatelessWidget {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
+                                        child: Text(
+                                      x.systemUser3.value,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      textDirection: TextDirection.ltr,
+                                    )),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Text('ویرایش'),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -305,56 +381,22 @@ class GPSSetteingPage extends StatelessWidget {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              // item 10
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'پاک کردن کاربر',
-                                        style: Get.textTheme.titleMedium,
+                                        child: Text(
+                                      x.callTime.value.toString() + ' دقیقه',
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      textDirection: TextDirection.rtl,
+                                    )),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Text('ویرایش'),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    )
                                   ],
                                 ),
                               ),

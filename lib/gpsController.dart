@@ -23,7 +23,15 @@ class GPSController extends GetxController {
   // setting status
   final doorLockState = false.obs;
   final timerOnOFF = false.obs;
-  final simCardAccount = 0.0.obs;
+  final simCardBalance = 0.0.obs;
+  final carStatus = ''.obs;
+  final systemUsers = ''.obs;
+  final systemCallSMS = ''.obs;
+  final systemUser1 = '+989155184335'.obs;
+  final systemUser2 = ''.obs;
+  final systemUser3 = ''.obs;
+  final simCardOperator = ''.obs;
+  final callTime = 1.obs;
 
   onBackgroundMessage(SmsMessage message) {
     print("onBackgroundMessage called");
@@ -66,7 +74,7 @@ class GPSController extends GetxController {
     // ignore: avoid_print
     //  print("Recive: $recivedSMS");
     //982000500666
-    if (message.body!.isNotEmpty && message.address == '+989155184335') {
+    if (message.body!.isNotEmpty && message.address == '982000500666') {
       recivedSMS(message.body?.trim() ?? "Error reading message body.");
       // recivedSMS(
       //     "[${(recivedSMS.value.substring(1, recivedSMS.value.length - 1)).trim()}]");
