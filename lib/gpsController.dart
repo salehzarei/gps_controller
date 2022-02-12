@@ -23,6 +23,7 @@ class GPSController extends GetxController {
   // setting status
   final doorLockState = false.obs;
   final timerOnOFF = false.obs;
+  final simCardAccount = 0.0.obs;
 
   onBackgroundMessage(SmsMessage message) {
     print("onBackgroundMessage called");

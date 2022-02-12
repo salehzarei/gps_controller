@@ -81,22 +81,8 @@ class GPSSetteingPage extends StatelessWidget {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                borderSide: const BorderSide(
-                                                    color: Colors.grey)),
-                                            filled: true,
-                                            hintStyle: const TextStyle(
-                                                color: Colors.grey),
-                                            hintText: "مقدار تایمر به دقیقه ",
-                                            fillColor: Colors.white70),
-                                        keyboardType: TextInputType.number,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    )
+                                        child: Text(
+                                            'آخرین اعتبار ${x.simCardAccount.value} ریال'))
                                   ],
                                 ),
                               ),
