@@ -11,6 +11,7 @@ enum GPSDialogBoxType {
   setUser1,
   setUser2,
   setUser3,
+  setSimCard,
   delayTime
 }
 
@@ -21,7 +22,7 @@ class GPSDialogBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final x = Get.put(GPSController());
-    return GetBuilder<GPSController>(
+    return GetX<GPSController>(
         builder: (_) => Scaffold(
               backgroundColor: Colors.transparent,
               body: Center(
@@ -472,6 +473,106 @@ class GPSDialogBox extends StatelessWidget {
                                           ElevatedButton(
                                             onPressed: () {
                                               x.sendMessage(command: 'del3');
+                                            },
+                                            child: const Text('حذف'),
+                                            style: ElevatedButton.styleFrom(
+                                              primary: Colors.red,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      )),
+                            const Spacer(),
+                            IconButton(
+                                onPressed: () => Get.back(),
+                                icon: const Icon(Icons.close))
+                          ],
+                        );
+                      }
+                      // تنظیم شماره سیم کارت گیرنده
+                      if (dialogType == GPSDialogBoxType.setSimCard) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const Spacer(),
+                            Text(
+                              'تنظیم شماره سیم کارت',
+                              style: Get.textTheme.headlineMedium
+                                  ?.copyWith(color: Colors.green),
+                            ),
+                            const Divider(),
+                            const Text(
+                                'لطفا شماره سیم کارت دستگاه را وارد کنید'),
+                            const Divider(),
+                            Expanded(
+                              flex: 5,
+                              child: TextField(
+                                controller: x.systemSimNum.value,
+                                textDirection: TextDirection.ltr,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        borderSide: const BorderSide(
+                                            color: Colors.grey)),
+                                    contentPadding: EdgeInsets.zero,
+                                    filled: true,
+                                    hintStyle:
+                                        const TextStyle(color: Colors.grey),
+                                    hintText: "شماره سیم کارت",
+                                    fillColor: Colors.white70),
+                                keyboardType: TextInputType.phone,
+                                maxLength: 13,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.only(top: 12.0),
+                                child: x.isLoadinToSendMessage.value
+                                    ? const SizedBox(
+                                        height: 35,
+                                        width: 35,
+                                        child: CircularProgressIndicator(
+                                            color: Colors.green),
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              if (x.systemSimNum.value.text
+                                                      .length >=
+                                                  11) {
+                                                x.allCongifs.value
+                                                        .modemPhonNumber =
+                                                    x.systemSimNum.value.text;
+                                                x.allCongifs.value.save();
+                                              }
+                                              x.update();
+                                              Get.back();
+                                            },
+                                            child: const Text('تغییر شماره'),
+                                            style: ElevatedButton.styleFrom(
+                                              primary: Colors.green,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 30,
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              x.systemSimNum.value.clear();
+                                              x.update();
                                             },
                                             child: const Text('حذف'),
                                             style: ElevatedButton.styleFrom(

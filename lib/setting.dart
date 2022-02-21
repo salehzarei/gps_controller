@@ -400,6 +400,44 @@ class GPSSetteingPage extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: Text(
+                                        'تنظیم شماره \nسیم کارت',
+                                        style: Get.textTheme.titleMedium,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                        child: Text(
+                                      x.systemSimNum.value.text,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      textDirection: TextDirection.ltr,
+                                    )),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Get.dialog(const GPSDialogBox(
+                                            dialogType:
+                                                GPSDialogBoxType.setSimCard));
+                                      },
+                                      child: const Text('ویرایش'),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // item 10
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
                                         'تنظیم تاخیر تماس',
                                         style: Get.textTheme.titleMedium,
                                       ),

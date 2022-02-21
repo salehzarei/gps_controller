@@ -26,16 +26,17 @@ class GPSController extends GetxController {
   Box<ConfigModel>? hiveConfig;
 
   // setting status
-  final allCongifs = ConfigModel(modemPhonNumber: '+989933785391').obs;
+  final allCongifs = ConfigModel().obs;
   final doorLockState = false.obs;
   final timerOnOFF = false.obs;
   final simCardBalance = 0.0.obs;
   final carStatus = ''.obs;
   final systemUsers = ''.obs;
   final systemCallSMS = ''.obs;
-  final systemUser1 = TextEditingController(text: '+989155184335').obs;
+  final systemUser1 = TextEditingController().obs;
   final systemUser2 = TextEditingController().obs;
   final systemUser3 = TextEditingController().obs;
+  final systemSimNum = TextEditingController().obs;
   final simCardOperator = ''.obs;
   final callDelayTime = TextEditingController(text: '1').obs;
 
@@ -71,6 +72,7 @@ class GPSController extends GetxController {
     if (hiveConfig!.isNotEmpty) {
       log("Hive Object Key is:" +
           hiveConfig!.getAt(0)!.callSMSPhone.toString());
+      log("Hive Object Key is:" + hiveConfig!.values.single.toString());
       allCongifs(hiveConfig?.getAt(0));
     } else {
       // add Defult Config for First Time
@@ -147,7 +149,7 @@ class GPSController extends GetxController {
     if (result != null && result) {
       //09933785391
       await telephony.value.sendSms(
-          to: allCongifs.value.modemPhonNumber ?? '+989933785391',
+          to: allCongifs.value.modemPhonNumber ?? '09932265621',
           message: command);
       log(command);
       Get.snackbar(
